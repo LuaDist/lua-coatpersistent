@@ -1,0 +1,11 @@
+
+MANIFEST
+*.tar
+*.tar.gz
+*.patch
+*.bak
+
+*.db
+*.png
+
+luacov.*
