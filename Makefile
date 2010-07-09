@@ -110,6 +110,7 @@ coverage:
 	cd src && luacov
 
 html:
+	cd doc && git pull
 	xmllint --noout --valid doc/*.html
 
 clean:
