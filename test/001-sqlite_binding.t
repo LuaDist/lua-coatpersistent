@@ -40,8 +40,6 @@ ok( john:isa 'Person' )
 is( john.id, nil, "john.id is nil" )
 ok( john:save(), "john:save()" )
 is( john.id, 1, "john.id is 1" )
---john.age = john.age + 1
---ok( john:save(), "john:save()" )
 
 brenda = Person { name = 'Brenda', age = 22 }
 is( brenda.id, nil, "brenda.id is nil" )
@@ -61,24 +59,3 @@ is( p.name, 'Brenda', "it is Brenda" )
 
 ok( brenda:delete(), "brenda:delete()" )
 
---bob = Person.create { name = 'Bob', age = 23 }
---ok( bob, "Person.create returns something" )
---ok( bob:isa 'Person', "it is a Person" )
---is( bob.id, 3 )
-
---Person.create {
---    { name = 'A', age = 20 },
---    { name = 'B', age = 20 },
---}
---for p in Person.find_by_age(23) do
---    print(p.name)
---end
-
---for p in Person.find() do
---    print(p.name)
---end
-
---local p = brenda.find(1)()
---ok( p, "Person.find(1) returns something" )
---ok( p:isa 'Person', "it is a Person" )
---is( p.name, 'John', "it is John" )
