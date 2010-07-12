@@ -15,6 +15,7 @@ local Coat = require 'Coat'
 local dado = require 'dado.sql'
 
 local error = Coat.error
+local argerror = Coat.argerror
 local checktype = Coat.checktype
 
 module 'Coat.Persistent'
@@ -57,7 +58,7 @@ local function execute (class, sql)
     _G.print('#', sql)
     local conn = cnx[class]
     if not conn then
-        error("No connection for class " .. class)
+        error("No connection for class " .. class._NAME)
     end
     local r, msg = conn:execute(sql)
     if not r then
@@ -129,7 +130,7 @@ function create (class, val)
     end
 end
 
-local function find_by_sql (class, sql)
+function find_by_sql (class, sql)
     local cur = execute(class, sql)
     return function ()
         local row = cur:fetch({}, 'a')
@@ -147,9 +148,13 @@ end
 function find (class, val)
     if val == nil then
         return find_by_sql(class, dado.select('*', Meta.table_name(class)))
-    else
+    elseif type(val) == 'number' then
         local cond = dado.AND { [Meta.primary_key(class)] = val }
         return find_by_sql(class, dado.select('*', Meta.table_name(class), cond))
+    elseif type(val) == 'string' then
+        return find_by_sql(class, dado.select('*', Meta.table_name(class), val))
+    else
+        argerror('find', 2, "number or string expected")
     end
 end
 
@@ -182,6 +187,7 @@ function _G.persistent (modname, options)
     M.delete = function (...) return delete(M, ...) end
     M.create = function (...) return create(M, ...) end
     M.find = function (...) return find(M, ...) end
+    M.find_by_sql = function (...) return find_by_sql(M, ...) end
     M.has_p = setmetatable({}, { __newindex = function (t, k, v) has_p(M, k, v) end })
     Meta.primary_key(M, primary_key)
     Meta.table_name(M, table_name)

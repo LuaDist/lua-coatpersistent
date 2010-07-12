@@ -25,35 +25,37 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
+error_like( [[local first = Person.find()()]],
+            "No connection for class Person" )
+
 os.remove 'test.db'
 Person.establish_connection('sqlite3', 'test.db')
 local conn = Person.connection()
 conn:execute(Person.sql_create)
 
-local names = {'Joe', 'John', 'Brenda' }
-for _, name in ipairs(names) do
-    Person.create { name = name, age = 20 }
-end
+ Person.create { 
+    { name = 'Joe', age = 20 },
+    { name = 'John', age = 20 },
+    { name = 'Brenda', age = 20 },
+}
 
 local nb = 0
-local found = {}
-for p in Person.find_by_age(20) do
+for p in Person.find_by_sql "select * from person where name like 'Jo%'" do
     ok( p:isa 'Person' )
-    table.insert(found, p.name)
     nb = nb + 1
 end
-is( nb, 3, "3 items returned" )
-eq_array( found, names )
-
-local first = Person.find_by_age(20)()
-ok( first:isa 'Person' )
-is( first.name, 'Joe' )
-
-error_like( [[local first = Person.find_by_age()()]],
-            "Cannot find without a value" )
+is( nb, 2, "2 items returned", find_by_sql )
 
 local nb = 0
-for p in Person.find() do
+for p in Person.find "name like 'Jo%'" do
+    ok( p:isa 'Person' )
     nb = nb + 1
 end
-is( nb, 3, "3 items returned" )
+is( nb, 2, "2 items returned", find )
+
+error_like( [[Person.find(true)]],
+            "bad argument #2 to find %(number or string expected%)" )
+
+error_like( [[Person.find_by_sql "syntax error"]],
+            'LuaSQL: near "syntax": syntax error' )
+
