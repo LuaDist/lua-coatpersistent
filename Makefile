@@ -101,10 +101,6 @@ coverage:
 	cd src && prove --exec="$(LUA) -lluacov" ../test/*.t
 	cd src && luacov
 
-html:
-	cd doc && git pull
-	xmllint --noout --valid doc/*.html
-
 clean:
 	rm -rf doc
 	rm -f MANIFEST *.bak *.db src/luacov.*.out src/*.db src/*.png test/*.png *.rockspec
