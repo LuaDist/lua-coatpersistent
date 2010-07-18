@@ -61,7 +61,7 @@ tag:
 	git tag -a -m 'tag release $(VERSION)' $(VERSION)
 
 doc:
-	git read-tree --prefix=doc/ -u gh-pages
+	git read-tree --prefix=doc/ -u remotes/origin/gh-pages
 
 MANIFEST: doc
 	git ls-files | perl -e '$(manifest_pl)' > MANIFEST
