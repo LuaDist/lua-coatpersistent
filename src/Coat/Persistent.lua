@@ -92,7 +92,7 @@ function save (class, obj)
     for field in Meta.attributes(class) do
         local val = obj[field]
         if val ~= nil then
-            values[field] = tostring(obj[field])
+            values[field] = tostring(val)
         end
     end
 
