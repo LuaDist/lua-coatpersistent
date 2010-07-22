@@ -17,7 +17,7 @@ sql_create = [[
 
 require 'Test.More'
 
-plan(20)
+plan(19)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 001.png", 'w')
@@ -40,8 +40,6 @@ ok( john:isa 'Person' )
 is( john.id, nil, "john.id is nil" )
 ok( john:save(), "john:save() --> insert" )
 is( john.id, 1, "john.id is 1" )
-john.age = john.age + 1
-ok( john:save(), "john:save() --> update" )
 
 brenda = Person { name = 'Brenda', age = 22 }
 is( brenda.id, nil, "brenda.id is nil" )
@@ -52,7 +50,7 @@ local p = Person.find(1)()
 ok( p, "Person.find(1) returns something" )
 ok( p:isa 'Person', "it is a Person" )
 is( p.name, 'John', "it is John" )
-is( p.age, 24 )
+is( p.age, 23 )
 
 local p = Person.find_by_name('Brenda')()
 ok( p, "Person.find_by_name returns something" )
