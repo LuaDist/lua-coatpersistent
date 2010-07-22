@@ -4,7 +4,7 @@ require 'Coat.Persistent'
 
 persistent 'Person'
 
-has_p.name = { is = 'rw', isa = 'string' }
+has_p.name = { is = 'ro', required = true, isa = 'string' }
 has_p.age = { is = 'rw', isa = 'number' }
 
 sql_create = [[
@@ -17,7 +17,7 @@ sql_create = [[
 
 require 'Test.More'
 
-plan(9)
+plan(3)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 005.png", 'w')
@@ -35,25 +35,12 @@ for _, name in ipairs(names) do
     Person.create { name = name, age = 20 }
 end
 
-local nb = 0
-local found = {}
-for p in Person.find_by_age(20) do
-    ok( p:isa 'Person' )
-    table.insert(found, p.name)
-    nb = nb + 1
-end
-is( nb, 3, "3 items returned" )
-eq_array( found, names )
+local p = Person.find(1)()
+is( p.name, 'Joe' )
 
-local first = Person.find_by_age(20)()
-ok( first:isa 'Person' )
-is( first.name, 'Joe' )
+error_like( [[local p = Person.find(1)(); p.name = 'Moe']],
+            "Cannot set a read%-only attribute %(name%)" )
 
-error_like( [[local first = Person.find_by_age()()]],
-            "Cannot find without a value" )
+error_like( [[Person.create { age = 21 }]],
+            "Attribute 'name' is required" )
 
-local nb = 0
-for p in Person.find() do
-    nb = nb + 1
-end
-is( nb, 3, "3 items returned" )
