@@ -68,7 +68,7 @@ local function execute (class, sql)
 end
 
 local function next_id (class)
-    local dataset = Meta.table_name(class)
+    local dataset = class._TABLE_NAME
     local cond = dado.AND { dataset = dataset }
     local cur = execute(class, dado.select('*', 'db_sequence_state', cond))
     local row = cur:fetch({}, 'a')
@@ -86,7 +86,7 @@ local function next_id (class)
 end
 
 function save (class, obj)
-    local primary_key = Meta.primary_key(class)
+    local primary_key = class._PRIMARY_KEY
 
     local values = {}
     for field in Meta.attributes(class) do
@@ -97,11 +97,11 @@ function save (class, obj)
     end
 
     if rawget(obj, '_db_exist') then
-        execute(class, dado.update(Meta.table_name(class), values))
+        execute(class, dado.update(class._TABLE_NAME, values))
     else
         obj[primary_key] = next_id(class)
         values[primary_key] = obj[primary_key]
-        execute(class, dado.insert(Meta.table_name(class), values))
+        execute(class, dado.insert(class._TABLE_NAME, values))
         rawset(obj, '_db_exist', true)
     end
 
@@ -113,9 +113,9 @@ function save (class, obj)
 end
 
 function delete (class, obj)
-    local primary_key = Meta.primary_key(class)
+    local primary_key = class._PRIMARY_KEY
     local cond = dado.AND { [primary_key] = obj[primary_key] }
-    return execute(class, dado.delete(Meta.table_name(class), cond))
+    return execute(class, dado.delete(class._TABLE_NAME, cond))
 end
 
 function create (class, val)
@@ -147,12 +147,12 @@ end
 
 function find (class, val)
     if val == nil then
-        return find_by_sql(class, dado.select('*', Meta.table_name(class)))
+        return find_by_sql(class, dado.select('*', class._TABLE_NAME))
     elseif type(val) == 'number' then
-        local cond = dado.AND { [Meta.primary_key(class)] = val }
-        return find_by_sql(class, dado.select('*', Meta.table_name(class), cond))
+        local cond = dado.AND { [class._PRIMARY_KEY] = val }
+        return find_by_sql(class, dado.select('*', class._TABLE_NAME, cond))
     elseif type(val) == 'string' then
-        return find_by_sql(class, dado.select('*', Meta.table_name(class), val))
+        return find_by_sql(class, dado.select('*', class._TABLE_NAME, val))
     else
         argerror('find', 2, "number or string expected")
     end
@@ -167,10 +167,10 @@ function has_p (class, name, options)
             error "Cannot find without a value"
         end
         local cond = dado.AND { [name] = val }
-        return find_by_sql(class, dado.select('*', Meta.table_name(class), cond))
+        return find_by_sql(class, dado.select('*', class._TABLE_NAME, cond))
     end
 
-    Meta.attribute(class, name)
+    table.insert(class._ATTR_P, name)
     Coat.has(class, name, options)
 end
 
@@ -181,6 +181,9 @@ function _G.persistent (modname, options)
     local primary_key = options.primary_key or 'id'
     local table_name = options.table_name or modname:gsub('%.', '_')
     local M = Coat._class(modname)
+    M._PRIMARY_KEY = primary_key
+    M._TABLE_NAME = table_name
+    M._ATTR_P = { primary_key }
     M.establish_connection = function (...) return establish_connection(M, ...) end
     M.connection = function () return connection(M) end
     M.save = function (...) return save(M, ...) end
@@ -189,9 +192,6 @@ function _G.persistent (modname, options)
     M.find = function (...) return find(M, ...) end
     M.find_by_sql = function (...) return find_by_sql(M, ...) end
     M.has_p = setmetatable({}, { __newindex = function (t, k, v) has_p(M, k, v) end })
-    Meta.primary_key(M, primary_key)
-    Meta.table_name(M, table_name)
-    Meta.attribute(M, primary_key)
     Coat.has(M, primary_key, { is = 'rw', isa = 'number' })
 end
 
