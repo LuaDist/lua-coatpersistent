@@ -10,7 +10,6 @@ local setmetatable = setmetatable
 local tostring = tostring
 local type = type
 local _G = _G
-local table = require 'table'
 local Coat = require 'Coat'
 local dado = require 'dado.sql'
 
@@ -170,7 +169,7 @@ function has_p (class, name, options)
         return find_by_sql(class, dado.select('*', class._TABLE_NAME, cond))
     end
 
-    table.insert(class._ATTR_P, name)
+    local t = class._ATTR_P; t[#t+1] = name
     Coat.has(class, name, options)
 end
 
