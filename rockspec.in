@@ -23,7 +23,7 @@ dependencies = {
     'lua-testmore >= 0.2.2',
 }
 build = {
-    type = 'builtin',
+    type = 'none',
     modules = {
         ['Coat.Persistent']         = 'src/Coat/Persistent.lua',
         ['Coat.Persistent.Meta']    = 'src/Coat/Persistent/Meta.lua',
