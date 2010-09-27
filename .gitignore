@@ -7,5 +7,6 @@ MANIFEST
 
 *.db
 *.png
+*.html
 
 luacov.*

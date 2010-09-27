@@ -102,9 +102,12 @@ coverage:
 	cd src && prove --exec="$(LUA) -lluacov" ../test/*.t
 	cd src && luacov
 
+README.html: README.md
+	Markdown.pl README.md > README.html
+
 clean:
 	rm -rf doc
-	rm -f MANIFEST *.bak *.db src/luacov.*.out src/*.db src/*.png test/*.png *.rockspec
+	rm -f MANIFEST *.bak *.db src/luacov.*.out src/*.db src/*.png test/*.png *.rockspec README.html
 
 .PHONY: test rockspec CHANGES
 
