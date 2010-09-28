@@ -52,6 +52,7 @@ Person.has_many.amigos = { class_name = 'Friend' }
 require 'Test.More'
 
 plan(12)
+Coat.Persistent.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 016.png", 'w')

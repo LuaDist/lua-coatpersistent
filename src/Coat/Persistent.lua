@@ -57,7 +57,9 @@ function connection (class)
 end
 
 local function execute (class, sql)
-    _G.print('#', sql)
+    if trace then
+        trace('#', sql)
+    end
     local conn = cnx[drv[class]]
     if not conn then
         error("No connection for class " .. class._NAME)

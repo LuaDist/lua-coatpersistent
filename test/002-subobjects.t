@@ -48,6 +48,7 @@ Person.has_many.Car = {} -- avoid circular definition
 require 'Test.More'
 
 plan(16)
+Coat.Persistent.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 002.png", 'w')

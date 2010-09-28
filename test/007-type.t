@@ -24,6 +24,7 @@ sql_create = [[
 require 'Test.More'
 
 plan(2)
+Coat.Persistent.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 007.png", 'w')
