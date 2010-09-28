@@ -3,6 +3,7 @@
 -- lua-CoatPersistent : <http://fperrad.github.com/lua-CoatPersistent/>
 --
 
+local ipairs = ipairs
 local rawget = rawget
 local rawset  = rawset
 local require = require
@@ -86,13 +87,24 @@ local function next_id (class)
     end
 end
 
+local function attributes (class)
+    local t = {}
+    for _, v in ipairs(class._ATTR_P) do
+        t[#t+1] = v
+    end
+    for _, cl in ipairs(class._PARENT) do
+        for _, v in ipairs(cl._ATTR_P) do
+            t[#t+1] = v
+        end
+    end
+    return t
+end
+
 function save (class, obj)
     local primary_key = class._PRIMARY_KEY
 
     local values = {}
-    local attrs = class._ATTR_P
-    for i = 1, #attrs do
-        local field = attrs[i]
+    for _, field in ipairs(attributes(class)) do
         local val = obj[field]
         if val ~= nil then
             values[field] = tostring(val)
@@ -216,8 +228,6 @@ function has_one (class, name, options)
         local id = obj[foreign_key]
         if id then
             return find(owned_class, id)()
-        else 
-            return nil
         end
     end
 

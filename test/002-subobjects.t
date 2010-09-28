@@ -47,7 +47,7 @@ Person.has_many.Car = {} -- avoid circular definition
 
 require 'Test.More'
 
-plan(12)
+plan(16)
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 002.png", 'w')
@@ -94,4 +94,18 @@ error_like( [[local p = Person{ name = 'Joe', age = 17 }; local a = Avatar{ imgp
 
 error_like( [[local p = Person{ name = 'Joe', age = 17 }; local bmw = Car{ name = 'BMW' }; p.cars = bmw]],
             "Not an array of object" )
+
+error_like( [[Person.has_one.Foo = {}]],
+            "Unknown class Foo" )
+
+error_like( [[Person.has_many.Foo = {}]],
+            "Unknown class Foo" )
+
+class 'Foo'
+
+error_like( [[Person.has_one.Foo = {}]],
+            "The class Foo has not a primary key" )
+
+error_like( [[Person.has_many.Foo = {}]],
+            "The class Foo has not a primary key" )
 
