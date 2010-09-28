@@ -108,6 +108,14 @@ function save (class, obj)
         rawset(obj, '_db_exist', true)
     end
 
+    local t = rawget(obj, '_subobjects')
+    if t then
+        for i = 1, #t do
+            t[i]:save()
+        end
+        rawset(obj, '_subobjects', nil)
+    end
+
     if primary_key then
         return obj[primary_key]
     else
@@ -216,6 +224,57 @@ function has_one (class, name, options)
     class._ACCESSOR = attr_name
 end
 
+function has_many (class, name, options)
+    checktype('has_one', 1, name, 'string')
+    options = options or {}
+    checktype('has_one', 2, options, 'table')
+    local owned_class_name = options.class_name or name
+    local owned_class = Coat.Meta.Class.class(owned_class_name)
+    if not owned_class then
+        error("Unknown class " .. owned_class_name)
+    end
+    local table_name = class._TABLE_NAME
+    local primary_key = class._PRIMARY_KEY
+    local owned_table_name = owned_class._TABLE_NAME
+    local owned_primary_key = owned_class._PRIMARY_KEY
+    if not owned_primary_key then
+        error("The class " .. owned_class_name .. " has not a primary key.")
+    end
+    local attr_name = owned_table_name .. 's'
+    if options.class_name then
+        attr_name = name
+    end
+
+    class['_set_' .. attr_name] = function (obj, list)
+        if type(list) ~= 'table' or list._CLASS then
+            error("Not an array of object")
+        end
+        local accessor = owned_class._ACCESSOR or table_name
+        local t = rawget(obj, '_subobjects')
+        if not t then
+            t = {}
+            rawset(obj, '_subobjects', t)
+        end
+        for i = 1, #list do
+            local val = list[i]
+            if not val:isa(owned_class) then
+                error("Not an object of class " .. owned_class._NAME .. " (got " .. Coat.type(val) .. ")")
+            end
+            val[accessor] = obj
+            t[#t+1] = val
+        end
+    end
+
+    class['_get_' .. attr_name] = function (obj)
+        local t = {}
+        local iter = owned_class['find_by_' .. table_name .. '_' .. primary_key](obj[primary_key])
+        for v in iter do
+            t[#t+1] = v
+        end
+        return t
+    end
+end
+
 function _G.persistent (modname, options)
     checktype('persistent', 1, modname, 'string')
     options = options or {}
@@ -235,6 +294,7 @@ function _G.persistent (modname, options)
     M.find_by_sql = function (...) return find_by_sql(M, ...) end
     M.has_p = setmetatable({}, { __newindex = function (t, k, v) has_p(M, k, v) end })
     M.has_one = setmetatable({}, { __newindex = function (t, k, v) has_one(M, k, v) end })
+    M.has_many = setmetatable({}, { __newindex = function (t, k, v) has_many(M, k, v) end })
     Coat.has(M, primary_key, { is = 'rw', isa = 'number' })
 end
 
