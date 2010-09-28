@@ -12,13 +12,10 @@ endif
 LIBDIR  := $(DESTDIR)/share/lua/5.1
 
 install:
-	mkdir -p $(LIBDIR)/Coat/Persistent
 	cp src/Coat/Persistent.lua      $(LIBDIR)/Coat
-	cp src/Coat/Persistent/Meta.lua $(LIBDIR)/Coat/Persistent
 
 uninstall:
 	rm -f $(LIBDIR)/Coat/Persistent.lua
-	rm -f $(LIBDIR)/Coat/Persistent/Meta.lua
 
 manifest_pl := \
 use strict; \

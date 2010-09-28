@@ -26,7 +26,6 @@ build = {
     type = 'none',
     modules = {
         ['Coat.Persistent']         = 'src/Coat/Persistent.lua',
-        ['Coat.Persistent.Meta']    = 'src/Coat/Persistent/Meta.lua',
     },
     copy_directories = { 'doc', 'test' },
 }

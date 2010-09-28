@@ -19,8 +19,6 @@ local checktype = Coat.checktype
 
 module 'Coat.Persistent'
 
-local Meta = require 'Coat.Persistent.Meta'
-
 local drv = {}
 local cnx = {}
 
@@ -92,7 +90,9 @@ function save (class, obj)
     local primary_key = class._PRIMARY_KEY
 
     local values = {}
-    for field in Meta.attributes(class) do
+    local attrs = class._ATTR_P
+    for i = 1, #attrs do
+        local field = attrs[i]
         local val = obj[field]
         if val ~= nil then
             values[field] = tostring(val)
