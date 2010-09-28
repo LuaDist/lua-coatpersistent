@@ -32,30 +32,34 @@ function establish_connection (class, driver, ...)
                 error(msg)
             end
         end
-    end
+    end --  create_db_sequence_tables
 
     drv[class] = driver
-    require('luasql.' .. driver)
-    local env = _G.luasql[driver]()
-    if not env then
-        error("cannot create an environment for " .. driver)
+    local conn = cnx[driver]
+    if not conn then
+        require('luasql.' .. driver)
+        local env = _G.luasql[driver]()
+        if not env then
+            error("cannot create an environment for " .. driver)
+        end
+        local msg
+        conn, msg = env:connect(...)
+        if not conn then 
+            error(msg) 
+        end
+        cnx[driver] = conn
     end
-    local conn, msg = env:connect(...)
-    if not conn then 
-        error(msg) 
-    end
-    cnx[class] = conn
     create_db_sequence_tables(conn)
     return conn
 end
 
 function connection (class)
-    return cnx[class]
+    return cnx[drv[class]]
 end
 
 local function execute (class, sql)
     _G.print('#', sql)
-    local conn = cnx[class]
+    local conn = cnx[drv[class]]
     if not conn then
         error("No connection for class " .. class._NAME)
     end
