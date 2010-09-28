@@ -177,6 +177,45 @@ function has_p (class, name, options)
     Coat.has(class, name, options)
 end
 
+function has_one (class, name, options)
+    checktype('has_one', 1, name, 'string')
+    options = options or {}
+    checktype('has_one', 2, options, 'table')
+    local owned_class_name = options.class_name or name
+    local owned_class = Coat.Meta.Class.class(owned_class_name)
+    if not owned_class then
+        error("Unknown class " .. owned_class_name)
+    end
+    local owned_table_name = owned_class._TABLE_NAME
+    local owned_primary_key = owned_class._PRIMARY_KEY
+    if not owned_primary_key then
+        error("The class " .. owned_class_name .. " has not a primary key.")
+    end
+    local attr_name = owned_table_name
+    if options.class_name then
+        attr_name = name
+    end
+    local foreign_key = options.foreign_key or owned_table_name .. '_' .. owned_primary_key
+
+    has_p(class, foreign_key, { is = 'rw', isa = 'number' })
+
+    class['_set_' .. attr_name] = function (obj, val)
+        obj[foreign_key] = val[owned_primary_key]
+        return val
+    end
+
+    class['_get_' .. attr_name] = function (obj)
+        local id = obj[foreign_key]
+        if id then
+            return find(owned_class, id)()
+        else 
+            return nil
+        end
+    end
+
+    class._ACCESSOR = attr_name
+end
+
 function _G.persistent (modname, options)
     checktype('persistent', 1, modname, 'string')
     options = options or {}
@@ -185,7 +224,7 @@ function _G.persistent (modname, options)
     local table_name = options.table_name or modname:gsub('%.', '_')
     local M = Coat._class(modname)
     M._PRIMARY_KEY = primary_key
-    M._TABLE_NAME = table_name
+    M._TABLE_NAME = table_name:lower()
     M._ATTR_P = { primary_key }
     M.establish_connection = function (...) return establish_connection(M, ...) end
     M.connection = function () return connection(M) end
@@ -195,6 +234,7 @@ function _G.persistent (modname, options)
     M.find = function (...) return find(M, ...) end
     M.find_by_sql = function (...) return find_by_sql(M, ...) end
     M.has_p = setmetatable({}, { __newindex = function (t, k, v) has_p(M, k, v) end })
+    M.has_one = setmetatable({}, { __newindex = function (t, k, v) has_one(M, k, v) end })
     Coat.has(M, primary_key, { is = 'rw', isa = 'number' })
 end
 
