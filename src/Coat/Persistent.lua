@@ -130,11 +130,7 @@ function save (class, obj)
         rawset(obj, '_subobjects', nil)
     end
 
-    if primary_key then
-        return obj[primary_key]
-    else
-        return 'saved'
-    end
+    return obj[primary_key]
 end
 
 function delete (class, obj)
