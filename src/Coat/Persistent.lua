@@ -145,9 +145,11 @@ end
 
 function create (class, val)
     if type(val) == 'table' and #val > 0 then
+        local t = {}
         for i = 1, #val do
-            create(class, val[i])
+            t[#t+1] = create(class, val[i])
         end
+        return t
     else
         local obj = class.new(val)
         obj:save()
