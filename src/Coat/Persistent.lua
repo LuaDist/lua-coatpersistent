@@ -114,7 +114,8 @@ function save (class, obj)
     end
 
     if rawget(obj, '_db_exist') then
-        execute(class, dado.update(class._TABLE_NAME, values))
+        local cond = dado.AND { [primary_key] = obj[primary_key] }
+        execute(class, dado.update(class._TABLE_NAME, values, cond))
     else
         obj[primary_key] = next_id(class)
         values[primary_key] = obj[primary_key]
