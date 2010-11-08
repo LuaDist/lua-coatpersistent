@@ -18,7 +18,7 @@ sql_create = [[
 require 'Test.More'
 
 plan(5)
-Coat.Persistent.trace = print
+require 'Coat.Persistent'.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 011.png", 'w')
@@ -37,8 +37,8 @@ p1 = Person.find(p1.id)()
 is( p1.name, 'John' )
 
 Person.create {
-    { name = 'Brenda', age = 31 }, 
-    { name = 'Nate', age = 34 }, 
+    { name = 'Brenda', age = 31 },
+    { name = 'Nate', age = 34 },
     { name = 'Dave', age = 29 },
 }
 

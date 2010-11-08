@@ -18,7 +18,7 @@ sql_create = [[
 require 'Test.More'
 
 plan(19)
-Coat.Persistent.trace = print
+require 'Coat.Persistent'.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 001.png", 'w')
@@ -26,13 +26,15 @@ if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     f:close()
 end
 
+local mc = require 'Coat.Meta.Class'
+
 os.remove 'test.db'
 local conn = Person.establish_connection('sqlite3', 'test.db')
 conn:execute(Person.sql_create)
 
-ok( Coat.Meta.Class.has( Person, 'id' ), "field id" )
-ok( Coat.Meta.Class.has( Person, 'name' ), "field name" )
-ok( Coat.Meta.Class.has( Person, 'age' ), "field age" )
+ok( mc.has( Person, 'id' ), "field id" )
+ok( mc.has( Person, 'name' ), "field name" )
+ok( mc.has( Person, 'age' ), "field age" )
 
 john = Person { name = 'John', age = 23 }
 is( john:type(), 'Person', "Person" )

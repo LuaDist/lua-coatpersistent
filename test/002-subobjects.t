@@ -23,7 +23,7 @@ has_p.age = { is = 'rw', isa = 'number' }
 sql_create = [[
     CREATE TABLE person (
         id INTEGER,
-        avatar_id INTEGER, 
+        avatar_id INTEGER,
         name CHAR(64),
         age INTEGER
     )
@@ -48,7 +48,7 @@ Person.has_many.Car = {} -- avoid circular definition
 require 'Test.More'
 
 plan(16)
-Coat.Persistent.trace = print
+require 'Coat.Persistent'.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 002.png", 'w')

@@ -9,7 +9,7 @@ has_p.max_speed = { is = 'rw', isa = 'number' }
 
 sql_create = [[
     CREATE TABLE vehicle (
-        c_id INTEGER, 
+        c_id INTEGER,
         color CHAR(64),
         max_speed INTEGER
     )
@@ -52,7 +52,7 @@ Person.has_many.amigos = { class_name = 'Friend' }
 require 'Test.More'
 
 plan(12)
-Coat.Persistent.trace = print
+require 'Coat.Persistent'.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 016.png", 'w')

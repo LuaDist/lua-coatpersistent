@@ -18,7 +18,7 @@ sql_create = [[
 require 'Test.More'
 
 plan(9)
-Coat.Persistent.trace = print
+require 'Coat.Persistent'.trace = print
 
 if os.getenv "GEN_PNG" and os.execute "dot -V" == 0 then
     local f = io.popen("dot -T png -o 006.png", 'w')
@@ -34,7 +34,7 @@ Person.establish_connection('sqlite3', 'test.db')
 local conn = Person.connection()
 conn:execute(Person.sql_create)
 
- Person.create { 
+ Person.create {
     { name = 'Joe', age = 20 },
     { name = 'John', age = 20 },
     { name = 'Brenda', age = 20 },

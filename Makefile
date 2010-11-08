@@ -1,6 +1,6 @@
 
 LUA     := lua
-VERSION := $(shell cd src && $(LUA) -e "require [[Coat.Persistent]]; print(Coat.Persistent._VERSION)")
+VERSION := $(shell cd src && $(LUA) -e "m = require [[Coat.Persistent]]; print(m._VERSION)")
 TARBALL := lua-coatpersistent-$(VERSION).tar.gz
 ifndef REV
   REV   := 1

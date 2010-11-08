@@ -12,18 +12,20 @@ local tostring = tostring
 local type = type
 local _G = _G
 local Coat = require 'Coat'
+local Meta = require 'Coat.Meta.Class'
 local dado = require 'dado.sql'
 
 local error = Coat.error
 local argerror = Coat.argerror
 local checktype = Coat.checktype
 
-module 'Coat.Persistent'
+_ENV = nil
+local _M = {}
 
 local drv = {}
 local cnx = {}
 
-function establish_connection (class, driver, ...)
+local function establish_connection (class, driver, ...)
     local function create_db_sequence_tables (conn)
         if not conn:execute "select count(*) from db_sequence_state" then
             local r, msg = conn:execute "create table db_sequence_state (dataset varchar(50), state_id int(11))"
@@ -43,20 +45,23 @@ function establish_connection (class, driver, ...)
         end
         local msg
         conn, msg = env:connect(...)
-        if not conn then 
-            error(msg) 
+        if not conn then
+            error(msg)
         end
         cnx[driver] = conn
     end
     create_db_sequence_tables(conn)
     return conn
 end
+_M.establish_connection = establish_connection
 
-function connection (class)
+local function connection (class)
     return cnx[drv[class]]
 end
+_M.connection = connection
 
 local function execute (class, sql)
+    local trace = _M.trace
     if trace then
         trace('#', sql)
     end
@@ -102,7 +107,7 @@ local function attributes (class)
     return t
 end
 
-function save (class, obj)
+local function save (class, obj)
     local primary_key = class._PRIMARY_KEY
 
     local values = {}
@@ -133,14 +138,16 @@ function save (class, obj)
 
     return obj[primary_key]
 end
+_M.save = save
 
-function delete (class, obj)
+local function delete (class, obj)
     local primary_key = class._PRIMARY_KEY
     local cond = dado.AND { [primary_key] = obj[primary_key] }
     return execute(class, dado.delete(class._TABLE_NAME, cond))
 end
+_M.delete = delete
 
-function create (class, val)
+local function create (class, val)
     if type(val) == 'table' and #val > 0 then
         local t = {}
         for i = 1, #val do
@@ -153,8 +160,9 @@ function create (class, val)
         return obj
     end
 end
+_M.create = create
 
-function find_by_sql (class, sql)
+local function find_by_sql (class, sql)
     local cur = execute(class, sql)
     return function ()
         local row = cur:fetch({}, 'a')
@@ -168,8 +176,9 @@ function find_by_sql (class, sql)
         end
     end
 end
+_M.find_by_sql = find_by_sql
 
-function find (class, val)
+local function find (class, val)
     if val == nil then
         return find_by_sql(class, dado.select('*', class._TABLE_NAME))
     elseif type(val) == 'number' then
@@ -181,8 +190,9 @@ function find (class, val)
         argerror('find', 2, "number or string expected")
     end
 end
+_M.find = find
 
-function has_p (class, name, options)
+local function has_p (class, name, options)
     checktype('has_p', 1, name, 'string')
     checktype('has_p', 2, options or {}, 'table')
 
@@ -197,13 +207,14 @@ function has_p (class, name, options)
     local t = class._ATTR_P; t[#t+1] = name
     Coat.has(class, name, options)
 end
+_M.has_p = has_p
 
-function has_one (class, name, options)
+local function has_one (class, name, options)
     checktype('has_one', 1, name, 'string')
     options = options or {}
     checktype('has_one', 2, options, 'table')
     local owned_class_name = options.class_name or name
-    local owned_class = Coat.Meta.Class.class(owned_class_name)
+    local owned_class = Meta.class(owned_class_name)
     if not owned_class then
         error("Unknown class " .. owned_class_name)
     end
@@ -234,13 +245,14 @@ function has_one (class, name, options)
 
     class._ACCESSOR = attr_name
 end
+_M.has_one = has_one
 
-function has_many (class, name, options)
+local function has_many (class, name, options)
     checktype('has_one', 1, name, 'string')
     options = options or {}
     checktype('has_one', 2, options, 'table')
     local owned_class_name = options.class_name or name
-    local owned_class = Coat.Meta.Class.class(owned_class_name)
+    local owned_class = Meta.class(owned_class_name)
     if not owned_class then
         error("Unknown class " .. owned_class_name)
     end
@@ -285,6 +297,7 @@ function has_many (class, name, options)
         return t
     end
 end
+_M.has_many = has_many
 
 function _G.persistent (modname, options)
     checktype('persistent', 1, modname, 'string')
@@ -309,9 +322,10 @@ function _G.persistent (modname, options)
     Coat.has(M, primary_key, { is = 'rw', isa = 'number' })
 end
 
-_VERSION = "0.1.0"
-_DESCRIPTION = "lua-CoatPersistent : an ORM for lua-Coat"
-_COPYRIGHT = "Copyright (c) 2010 Francois Perrad"
+_M._VERSION = "0.1.0"
+_M._DESCRIPTION = "lua-CoatPersistent : an ORM for lua-Coat"
+_M._COPYRIGHT = "Copyright (c) 2010 Francois Perrad"
+return _M
 --
 -- This library is licensed under the terms of the MIT/X11 license,
 -- like Lua itself.
