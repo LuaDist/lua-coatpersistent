@@ -322,7 +322,7 @@ function _G.persistent (modname, options)
     Coat.has(M, primary_key, { is = 'rw', isa = 'number' })
 end
 
-_M._VERSION = "0.1.0"
+_M._VERSION = "0.1.1"
 _M._DESCRIPTION = "lua-CoatPersistent : an ORM for lua-Coat"
 _M._COPYRIGHT = "Copyright (c) 2010 Francois Perrad"
 return _M

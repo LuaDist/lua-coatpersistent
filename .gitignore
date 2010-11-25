@@ -1,12 +1,10 @@
 
-MANIFEST
-*.tar
-*.tar.gz
-*.patch
-*.bak
+/MANIFEST
+/README.html
+/*.tar
+/*.bak
+/*.tar.gz
 
 *.db
 *.png
-*.html
-
 luacov.*
