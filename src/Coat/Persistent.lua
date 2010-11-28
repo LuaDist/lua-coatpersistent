@@ -18,6 +18,9 @@ local dado = require 'dado.sql'
 local error = Coat.error
 local argerror = Coat.argerror
 local checktype = Coat.checktype
+local _class = Coat._class
+local has = Coat.has
+local type = Coat.type
 
 _ENV = nil
 local _M = {}
@@ -205,7 +208,7 @@ local function has_p (class, name, options)
     end
 
     local t = class._ATTR_P; t[#t+1] = name
-    Coat.has(class, name, options)
+    has(class, name, options)
 end
 _M.has_p = has_p
 
@@ -281,7 +284,7 @@ local function has_many (class, name, options)
         for i = 1, #list do
             local val = list[i]
             if not val:isa(owned_class) then
-                error("Not an object of class " .. owned_class._NAME .. " (got " .. Coat.type(val) .. ")")
+                error("Not an object of class " .. owned_class._NAME .. " (got " .. type(val) .. ")")
             end
             val[accessor] = obj
             t[#t+1] = val
@@ -305,7 +308,7 @@ function _G.persistent (modname, options)
     checktype('persistent', 2, options, 'table')
     local primary_key = options.primary_key or 'id'
     local table_name = options.table_name or modname:gsub('%.', '_')
-    local M = Coat._class(modname)
+    local M = _class(modname)
     M._PRIMARY_KEY = primary_key
     M._TABLE_NAME = table_name:lower()
     M._ATTR_P = { primary_key }
@@ -319,7 +322,7 @@ function _G.persistent (modname, options)
     M.has_p = setmetatable({}, { __newindex = function (t, k, v) has_p(M, k, v) end })
     M.has_one = setmetatable({}, { __newindex = function (t, k, v) has_one(M, k, v) end })
     M.has_many = setmetatable({}, { __newindex = function (t, k, v) has_many(M, k, v) end })
-    Coat.has(M, primary_key, { is = 'rw', isa = 'number' })
+    has(M, primary_key, { is = 'rw', isa = 'number' })
 end
 
 _M._VERSION = "0.1.1"
