@@ -1,5 +1,5 @@
 package = 'lua-CoatPersistent'
-version = '0.1.1-1'
+version = '0.1.1-2'
 source = {
     url = 'http://cloud.github.com/downloads/fperrad/lua-CoatPersistent/lua-coatpersistent-0.1.1.tar.gz',
     md5 = '0820993c34a867c4c1891bffdd49f65d',
