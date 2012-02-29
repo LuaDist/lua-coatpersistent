@@ -1,0 +1,17 @@
+
+name = "lua-coatpersistent"
+version = "0.1.1"
+
+desc = "an ORM for lua-Coat"
+author = "Francois Perrad"
+license = "MIT/X11"
+url = "http://fperrad.github.com/lua-CoatPersistent/"
+maintainer = "Francois Perrad"
+
+depends = {
+    "lua ~> 5.1",
+    "luasql-sqlite3 >= 2.2.0",
+    "dado >= 1.2.0",
+    "lua-coat >= 0.8.5",
+    "lua-testmore >= 0.2.3",
+}
