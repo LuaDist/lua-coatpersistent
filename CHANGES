@@ -1,5 +1,9 @@
 Revision history for lua-CoatPersistent
 
+0.1.2
+	+ work with Lua 5.2.0
+	+ add LuaDist support
+
 0.1.1  Fri Nov 26 10:30:00 2010
 	+ fix compatibility with Lua 5.2.0 alpha
 
