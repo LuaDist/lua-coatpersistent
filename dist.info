@@ -1,6 +1,6 @@
 
 name = "lua-coatpersistent"
-version = "0.1.1"
+version = "0.1.2"
 
 desc = "an ORM for lua-Coat"
 author = "Francois Perrad"

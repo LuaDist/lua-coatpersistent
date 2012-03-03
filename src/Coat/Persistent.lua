@@ -325,9 +325,9 @@ function _G.persistent (modname, options)
     has(M, primary_key, { is = 'rw', isa = 'number' })
 end
 
-_M._VERSION = "0.1.1"
+_M._VERSION = "0.1.2"
 _M._DESCRIPTION = "lua-CoatPersistent : an ORM for lua-Coat"
-_M._COPYRIGHT = "Copyright (c) 2010 Francois Perrad"
+_M._COPYRIGHT = "Copyright (c) 2010-2012 Francois Perrad"
 return _M
 --
 -- This library is licensed under the terms of the MIT/X11 license,

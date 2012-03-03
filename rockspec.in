@@ -20,7 +20,7 @@ dependencies = {
     'lua >= 5.1',
     'luasql-sqlite3 >= 2.2.0',
     'dado >= 1.2.0',
-    'lua-coat >= 0.8.5',
+    'lua-coat >= 0.8.6',
     'lua-testmore >= 0.2.3',
 }
 build = {

@@ -22,7 +22,7 @@ and the sources are hosted at [http://github.com/fperrad/lua-CoatPersistent](htt
 Copyright and License
 ---------------------
 
-Copyright (c) 2010 Francois Perrad
+Copyright (c) 2010-2012 Francois Perrad
 
 This library is licensed under the terms of the MIT/X11 license, like Lua itself.
 
