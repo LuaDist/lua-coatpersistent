@@ -11,5 +11,5 @@ maintainer = "Francois Perrad"
 depends = {
     "lua ~> 5.1",
     "dado >= 1.2.0",
-    "lua-coat >= 0.8.5",
+    "lua-coat >= 0.8.6",
 }
