@@ -1,0 +1,41 @@
+type = "x86_64"
+arch = "Ubuntu"
+author = "Francois Perrad"
+depends = {
+[[lua ~> 5.1]],
+[[dado >= 1.2.0]],
+[[lua-coat >= 0.8.6]],
+}
+
+desc = "an ORM for lua-Coat"
+version = "0.1.2"
+maintainer = "Francois Perrad"
+files = {
+Runtime = {
+[[lib/lua/Coat/Persistent.lua]],
+}
+,
+Data = {
+[[share/lua-coatpersistent/CHANGES]],
+[[share/lua-coatpersistent/COPYRIGHT]],
+[[share/lua-coatpersistent/README.md]],
+}
+,
+Test = {
+[[share/lua-coatpersistent/test//009-required_read_only.t]],
+[[share/lua-coatpersistent/test//000-require.t]],
+[[share/lua-coatpersistent/test//007-type.t]],
+[[share/lua-coatpersistent/test//016-options.t]],
+[[share/lua-coatpersistent/test//002-subobjects.t]],
+[[share/lua-coatpersistent/test//010-update.t]],
+[[share/lua-coatpersistent/test//006-find_by_sql.t]],
+[[share/lua-coatpersistent/test//001-sqlite_binding.t]],
+[[share/lua-coatpersistent/test//005-iter.t]],
+[[share/lua-coatpersistent/test//011-create.t]],
+}
+,
+}
+
+license = "MIT/X11"
+name = "lua-coatpersistent"
+url = "http://fperrad.github.com/lua-CoatPersistent/"
